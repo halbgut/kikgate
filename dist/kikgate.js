@@ -5,8 +5,10 @@
 
 var _ = require('lodash');
 var async = require('async');
-
 var child_process = require('child_process');
+
+var repeat = 3;
+var parallel = 3;
 
 process.stdout.write('Fuck NPM!\n');
 
@@ -21,7 +23,7 @@ var concat = function concat(obj) {
 };
 
 var checkAll = function checkAll(deps) {
-  return async.parallelLimit(deps.map(checker), 10, function (err, data) {
+  return async.parallelLimit(deps.map(checker), parallel, function (err, data) {
     if (err) return process.stderr.write(err);
     var failed = _.filter(data, function (dep) {
       return !dep[0];
@@ -38,7 +40,7 @@ var checkAll = function checkAll(deps) {
   });
 };
 
-var checker = function checker(dep) {
+var checker = function checker(dep, r) {
   return function (cb) {
     var gotData = void 0;
     var info = child_process.spawn('npm', ['info', dep]);
@@ -46,6 +48,7 @@ var checker = function checker(dep) {
       gotData = true;
     });
     info.on('exit', function (code) {
+      if (r < repeat + 1 && !gotData) checker(dep, (r || 0) + 1)(cb);
       cb(code, [gotData, dep]);
     });
   };

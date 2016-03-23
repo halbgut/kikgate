@@ -4,8 +4,10 @@
 
 const _ = require('lodash')
 const async = require('async')
-
 const child_process = require('child_process')
+
+const repeat = 3
+const parallel = 3
 
 process.stdout.write('Fuck NPM!\n')
 
@@ -20,7 +22,7 @@ const concat = (obj) => {
 }
 
 const checkAll = (deps) =>
-  async.parallelLimit(deps.map(checker), 10, (err, data) => {
+  async.parallelLimit(deps.map(checker), parallel, (err, data) => {
     if (err) return process.stderr.write(err)
     const failed = _.filter(data, (dep) => !dep[0])
     if (failed.length > 0) {
@@ -36,13 +38,13 @@ const checkAll = (deps) =>
     }
   })
 
-const checker = (dep, snd) => (cb) => {
+const checker = (dep, r) => (cb) => {
   let gotData
   const info = child_process.spawn('npm', ['info', dep])
   info.stdout.on('data', () => { gotData = true })
   info
     .on('exit', (code) => {
-      if (!snd && !gotData) checker(dep, true)(cb)
+      if (r < repeat + 1 && !gotData) checker(dep, (r || 0) + 1)(cb)
       cb(code, [gotData, dep])
     })
 }
