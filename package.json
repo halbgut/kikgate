@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Check if any dependencies have been unpublished",
   "main": "kikgate.js",
+  "bin": {
+    "kikgate": "./kikgate.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
