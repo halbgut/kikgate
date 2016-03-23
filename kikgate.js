@@ -36,12 +36,13 @@ const checkAll = (deps) =>
     }
   })
 
-const checker = (dep) => (cb) => {
+const checker = (dep, snd) => (cb) => {
   let gotData
   const info = child_process.spawn('npm', ['info', dep])
   info.stdout.on('data', () => { gotData = true })
   info
     .on('exit', (code) => {
+      if (!snd && !gotData) checker(dep, true)(cb)
       cb(code, [gotData, dep])
     })
 }
