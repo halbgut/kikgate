@@ -1,0 +1,16 @@
+{
+  "name": "kikgate",
+  "version": "0.1.0",
+  "description": "Check if any dependencies have been unpublished",
+  "main": "kikgate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kriegslustig <github@ls7.ch>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.0-rc.1",
+    "lodash": "^4.6.1",
+    "kik": "^1.0.0"
+  }
+}
